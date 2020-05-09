@@ -7,42 +7,23 @@ from ..items import CrawlerBotItem
 class SurveillanceVideoSpider(scrapy.Spider):
     produts = CrawlerBotItem()
     name = 'surveillance_video'
-    allowed_domains = ['surveillance-video.com.com']
-    start_urls = ['https://www.surveillance-video.com/']
-    url_base = 'https://www.surveillance-video.com/bullet-cameras/shopby/day-night-+audio/m-jpeg-+h-265--+h-264--/network-ip/?dir=asc&limit=50&mode=grid&order=price&'
-    #url_2 = 'https://www.surveillance-video.com
-    # /bullet-cameras/shopby/day-night-+audio/m-jpeg-+h-265--+h-264--/
-    # network-ip/?dir=asc&limit=50&mode=grid&order=price&p=2'
-    pages = range(1,17)
-    urls = []
-    link_detail_product = []
-
-
-
+    allowed_domains = ['surveillance-video.com']
+    start_urls = ['https://www.surveillance-video.com/cameras/']
+    #url_base = 'https://www.surveillance-video.com/bullet-cameras/shopby/day-night-+audio/m-jpeg-+h-265--+h-264--/network-ip/?dir=asc&limit=50&mode=grid&order=price&'
 
     def parse(self, response):
-        #for url in urls:
-           # print(url)
-           # req = scrapy.Request(url, callback=self.parse_links)
-           # yield req
-         for sel in response.css("div.details-area"):
-            link = sel.css("h2.product-name > a::attr(href)").extract_first()
-            if link is not None:
-               req_detail = scrapy.Request(link, callback=self.parse_detail_page)
-               yield req_detail
-        
-         next_page_url = response.css("div.pages a[class=next i-next]::attr(href)")
-         if next_page_url is not None:
-             yield scrapy.Request(response.urljoin(next_page_url))
 
-    #def parse_links(self, response):
-      #  for sel in response.css("div.details-area"):
-       #     link = sel.css("h2.product-name > a::attr(href)").extract_first()
-        #    link_detail_product.append(link)
-            #if link is not None:
-               #req_detail = scrapy.Request(link, callback=self.parse_detail_page)
-         #   yield link_detail_product
-
+            for sel in response.css("li.item odd"):
+                link = sel.css("h2.product-name > a::attr(href)").extract_first()
+                if link is not None:
+                    req_detail = response.follow(link, callback=self.parse_detail_page)
+                    yield req_detail
+            
+            next_page_url = response.css("div.tool-bar-bottom-mobile div.pages a::attr(href)").getall()
+    
+            if next_page_url is not None:
+                next_page_url = response.urljoin(next_page_url[4])
+                yield scrapy.Request(next_page_url, callback=self.parse)
 
     
     def parse_detail_page(self, response):
