@@ -17,5 +17,14 @@ class CrawlerBotItem(scrapy.Item):
     price = scrapy.Field()
     product_detail = scrapy.Field()
     product_specs = scrapy.Field()
-    
+    link = scrapy.Field()
+    manufacturer = scrapy.Field()
+    features = scrapy.Field()
+    camera_signal = scrapy.Field()
+    resolution = scrapy.Field()
+    sensor_option = scrapy.Field()
+    lens_type = scrapy.Field()
+    lens_size = scrapy.Field()
+    infrared_distance = scrapy.Field()
+    durability = scrapy.Field()
     pass
