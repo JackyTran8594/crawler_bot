@@ -9,7 +9,13 @@ class SurveillanceVideoSpider(scrapy.Spider):
     produts = CrawlerBotItem()
     name = 'surveillance_video'
     allowed_domains = ['surveillance-video.com']
-    start_urls = ['https://www.surveillance-video.com/cameras/']
+    #start_urls = ['https://www.surveillance-video.com/cameras/']
+    # bullet-camera
+    start_urls = ['https://www.surveillance-video.com/bullet-cameras/shopby/h-264--/network-ip/?']
+    # dome-camera
+    #start_urls = ['https://www.surveillance-video.com/dome-cameras/shopby/network-ip/?']
+    # ptz-camera
+    #start_urls = ['https://www.surveillance-video.com/ptz-cameras/shopby/network-ip/']
 
     def parse(self, response):
             links = response.css("div.productdescpart a::attr(href)").extract()
@@ -40,10 +46,13 @@ class SurveillanceVideoSpider(scrapy.Spider):
         sku = sku_model[0]
         model = sku_model[1]
         price = response.xpath('//div[contains(@class, "price-box")]//span//span//span/text()').get()
-        product_detail = response.css("div#description_tabbed .std::text").extract()
-        product_specs = response.css("div#additional_tabbed table#product-attribute-specs-table::text").extract()
+        product_detail_p = response.css("div#description_tabbed div.std p::text").extract()
+        product_detail_li = response.css("div#description_tabbed div.std ul li::text").extract()
+        product_detail = response.css("div#description_tabbed div.std").extract()
+        product_specs_th = list(dict.fromkeys(response.css("div#additional_tabbed table#product-attribute-specs-table tbody tr th::text").extract()))
+        product_specs = response.css("div#additional_tabbed table#product-attribute-specs-table").extract()
         features_common = response.css("div#additional_tabbed table#product-attribute-specs-table tbody tr td::text").getall()
-        tr_lst = response.css("div#additional_tabbed table#product-attribute-specs-table tbody tr").extract()
+        #tr_lst = response.css("div#additional_tabbed table#product-attribute-specs-table tbody tr").extract()
             
 
         try:
@@ -114,9 +123,9 @@ class SurveillanceVideoSpider(scrapy.Spider):
         #loader_detail.add_value('lens_size', lens_size)
         #loader_detail.add_value('infrared_distance', infrared_distance)
         #loader_detail.add_value('durability', durability)
-        #loader_detail.add_value('price', price)
-        #loader_detail.add_value('product_detail', product_detail)
-        #loader_detail.add_value('product_specs', product_specs)
+        loader_detail.add_value('price', price)
+        loader_detail.add_value('product_detail', product_detail)
+        loader_detail.add_value('product_specs', product_specs)
 
         #yield {
         #    'title' : title,
