@@ -28,3 +28,22 @@ class CrawlerBotItem(scrapy.Item):
     infrared_distance = scrapy.Field()
     durability = scrapy.Field()
     pass
+
+class Product(scrapy.Item):
+    title = scrapy.Field()
+    sku = scrapy.Field()
+    model = scrapy.Field()
+    price = scrapy.Field()
+    product_detail = scrapy.Field()
+    product_specs = scrapy.Field()
+    link = scrapy.Field()
+    manufacturer = scrapy.Field()
+    category = scrapy.Field()
+    pass
+
+
+class Category(scrapy.Item):
+    id = scrapy.Field()
+    name = scrapy.Field()
+    pass
+
