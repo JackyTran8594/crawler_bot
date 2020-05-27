@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 import scrapy
-
+from scrapy.http import Request
+from scrapy.loader import ItemLoader
+from ..items import SurveillanceItem
 
 class TikiProductSpider(scrapy.Spider):
     name = 'tiki_product'
     allowed_domains = ['tiki.com']
     start_urls = ['http://tiki.com/']
+    product = SurveillanceItem()
 
     def parse(self, response):
             links = response.css("div.EdgeBanner__Wrapper-sc-1ubmrcp-0 dCQjxq a::attr(href)").extract()
             for link in links:                
-                loader = ItemLoader(item=CrawlerBotItem(), selector= link)
+                loader = ItemLoader(item=SurveillanceItem(), selector= link)
                 loader.add_value('link', link)
                 product = loader.load_item()
                 if link is not None:

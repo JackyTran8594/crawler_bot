@@ -2,11 +2,12 @@
 import scrapy
 from scrapy.http import Request
 from scrapy.loader import ItemLoader
-from ..items import CrawlerBotItem
+from ..items import SurveillanceItem
+
 
 
 class SurveillanceVideoSpider(scrapy.Spider):
-    produts = CrawlerBotItem()
+    produts = SurveillanceItem()
     name = 'surveillance_video'
     allowed_domains = ['surveillance-video.com']
     start_urls = ['https://www.surveillance-video.com/cameras/']
@@ -22,7 +23,7 @@ class SurveillanceVideoSpider(scrapy.Spider):
     def parse(self, response):
             links = response.css("div.productdescpart a::attr(href)").extract()
             for link in links:                
-                loader = ItemLoader(item=CrawlerBotItem(), selector= link)
+                loader = ItemLoader(item=SurveillanceItem(), selector= link)
                 loader.add_value('link', link)
                 product = loader.load_item()
                 if link is not None:

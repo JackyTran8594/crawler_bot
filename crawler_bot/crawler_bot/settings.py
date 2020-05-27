@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from shutil import which
 
 # Scrapy settings for crawler_bot project
 #
@@ -14,6 +15,10 @@ BOT_NAME = 'crawler_bot'
 SPIDER_MODULES = ['crawler_bot.spiders']
 NEWSPIDER_MODULE = 'crawler_bot.spiders'
 
+#Configuration selenium
+SELENIUM_DRIVER_NAME = 'chromedriver'
+SELENIUM_DRIVER_EXECUTABLE_PATH = which('C:/DriverChrome/chromedriver_win32/chromedriver')
+SELENIUM_DRIVER_ARGUMENTS=['-headless']  # '--headless' if using chrome instead of firefox
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'crawler_bot (+http://www.yourdomain.com)'
@@ -55,6 +60,7 @@ ROBOTSTXT_OBEY = True
 DOWNLOADER_MIDDLEWARES = {
     'crawler_bot.middlewares.CrawlerBotDownloaderMiddleware': 543,
     'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware': 350,
+    'scrapy_selenium.SeleniumMiddleware': 800
 }
 
 

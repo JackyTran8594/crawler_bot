@@ -8,7 +8,7 @@
 import scrapy
 
 
-class CrawlerBotItem(scrapy.Item):
+class SurveillanceItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     title = scrapy.Field()
@@ -29,7 +29,8 @@ class CrawlerBotItem(scrapy.Item):
     durability = scrapy.Field()
     pass
 
-class Product(scrapy.Item):
+
+class ProductItem(scrapy.Item):
     title = scrapy.Field()
     sku = scrapy.Field()
     model = scrapy.Field()
@@ -42,8 +43,20 @@ class Product(scrapy.Item):
     pass
 
 
-class Category(scrapy.Item):
+class CategoryItem(scrapy.Item):
     id = scrapy.Field()
     name = scrapy.Field()
     pass
 
+
+class SmartSwitchItem(scrapy.Item):
+    title = scrapy.Field()
+    sku = scrapy.Field()
+    model = scrapy.Field()
+    price = scrapy.Field()
+    product_detail = scrapy.Field()
+    product_specs = scrapy.Field()
+    link = scrapy.Field()
+    manufacturer = scrapy.Field()
+    features = scrapy.Field()
+    pass
