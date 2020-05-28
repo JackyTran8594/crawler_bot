@@ -16,18 +16,21 @@ SPIDER_MODULES = ['crawler_bot.spiders']
 NEWSPIDER_MODULE = 'crawler_bot.spiders'
 
 #Configuration selenium
-SELENIUM_DRIVER_NAME = 'chromedriver'
-SELENIUM_DRIVER_EXECUTABLE_PATH = which('C:/DriverChrome/chromedriver_win32/chromedriver')
-SELENIUM_DRIVER_ARGUMENTS=['-headless']  # '--headless' if using chrome instead of firefox
+# SELENIUM_DRIVER_NAME = 'chromedriver'
+# SELENIUM_DRIVER_EXECUTABLE_PATH = which('C:/ChromeDriverForSelenium/chromedriver')
+# SELENIUM_DRIVER_ARGUMENTS=['-headless']  # '--headless' if using chrome instead of firefox
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'crawler_bot (+http://www.yourdomain.com)'
+# USER_AGENT = 'crawler_bot (+http://www.yourdomain.com)'
+USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
+# CONCURRENT_REQUESTS = 2
+
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -60,7 +63,7 @@ ROBOTSTXT_OBEY = True
 DOWNLOADER_MIDDLEWARES = {
     'crawler_bot.middlewares.CrawlerBotDownloaderMiddleware': 543,
     'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware': 350,
-    'scrapy_selenium.SeleniumMiddleware': 800
+    # 'scrapy_selenium.SeleniumMiddleware': 800
 }
 
 

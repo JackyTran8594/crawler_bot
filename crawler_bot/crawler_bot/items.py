@@ -51,6 +51,7 @@ class CategoryItem(scrapy.Item):
 
 class SmartSwitchItem(scrapy.Item):
     title = scrapy.Field()
+    rating = scrapy.Field()
     sku = scrapy.Field()
     model = scrapy.Field()
     price = scrapy.Field()

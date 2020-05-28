@@ -6,12 +6,16 @@ from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.actions import input_device
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webelement import WebElement
+from crawler_bot.items import SmartSwitchItem
+from scrapy.loader import ItemLoader
 
 
 class AmazonSmartswitchSpider(scrapy.Spider):
     name = 'amazon_smartswitch'
     allowed_domains = ['amazon.com']
     start_urls = ['http://amazon.com/']
+    # start_urls = ['https://www.amazon.com/s?k=smart+switch+light&ref=nb_sb_noss_2']
 
     
     def __init__(self):
@@ -20,14 +24,52 @@ class AmazonSmartswitchSpider(scrapy.Spider):
     # def start_requests(self, response):
     #     url = start_urls
     #     self.driver.get(response.url)
-    #     yield scrapy.Request(url, self.parse)
+    #     search_textbox = self.driver.find_element_by_id('twotabsearchtextbox')
+    #     search_textbox.send_keys("smart switch light")
+    #     div_search = self.driver.find_element_by_id('nav-search')
+    #     page_search = div_search.find_element_by_class('nav-input').click()
+    #     window_after = self.driver.window_handles[1] 
+    #     print(window_after)
+    #     yield scrapy.Request(self.driver.get(window_after), self.parse)
 
     def parse(self, response):
-        self.driver.get(response.url)
-        search_textbox = self.driver.find_element_by_id('twotabsearchtextbox')
+        driver = self.driver
+        driver.get(response.url)
+        search_textbox = driver.find_element_by_id('twotabsearchtextbox')
         search_textbox.send_keys("smart switch light")
-        div_search = self.driver.find_element_by_id('nav-search')
-        page_search = div_search.find_element_by_class('nav-input').click()
-        
+        div_search = driver.find_element_by_id('nav-search')
+        page_search = div_search.find_element_by_class_name('nav-input').click()      
+        window_after = driver.window_handles[0]
+        driver.switch_to.window(window_after)
+        links = driver.find_elements_by_xpath('//a[@class="a-link-normal a-text-normal"]')
+        # print(links)
+        current_window = driver.current_window_handle
 
-        pass
+        for link in links:
+            href = link.get_attribute('href')
+            print(href)
+            # itemloader = ItemLoader(item=SmartSwitchItem, selector=href)
+            # itemloader.add_value('link', href)
+            # href.click()
+            # driver.switch_to_window([win for win in driver.window_handles if win != current_window][0])
+            # title = driver.find_element_by_id('productTitle').text
+            # rating = driver.find_element_by_class_name('a-icon-alt').text
+            # price = driver.find_element_by_id('a-icon-alt').text
+            # product_detail = driver.find_element_by_id('feature-bullets').text
+            # product_specs = driver.find_element_by_id('productDetails_techSpec_section_1').text
+            # itemloader.add_value('title', title)
+            # itemloader.add_value('rating', rating)
+            # itemloader.add_value('price', price)
+            # itemloader.add_value('product_detail', product_detail)
+            # itemloader.add_value('product_specs', product_specs)
+            # itemloader.load_item()
+            driver.close()
+            driver.switch_to_window(current_window)
+
+        next_page_url = driver.find_element_by_xpath('//li[@class="a-last"]/a').get_attribute('href')
+        if next_page_url is not None:
+            # print(next_page_url)
+            next_page = response.urljoin(next_page_url)
+            yield scrapy.Request(next_page, callback = self.parse)
+
+
