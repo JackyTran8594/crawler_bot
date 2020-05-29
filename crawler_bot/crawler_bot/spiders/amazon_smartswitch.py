@@ -42,27 +42,28 @@ class AmazonSmartswitchSpider(scrapy.Spider):
         window_after = driver.window_handles[0]
         driver.switch_to.window(window_after)
         links = driver.find_elements_by_xpath('//a[@class="a-link-normal a-text-normal"]')
-        # print(links)
+        print(links)
         current_window = driver.current_window_handle
 
         for link in links:
             href = link.get_attribute('href')
-            print(href)
-            # itemloader = ItemLoader(item=SmartSwitchItem, selector=href)
-            # itemloader.add_value('link', href)
-            # href.click()
+            # print(href)
+            itemloader = ItemLoader(item=SmartSwitchItem(), selector=href)
+            itemloader.add_value('link', href)
             # driver.switch_to_window([win for win in driver.window_handles if win != current_window][0])
-            # title = driver.find_element_by_id('productTitle').text
-            # rating = driver.find_element_by_class_name('a-icon-alt').text
-            # price = driver.find_element_by_id('a-icon-alt').text
-            # product_detail = driver.find_element_by_id('feature-bullets').text
-            # product_specs = driver.find_element_by_id('productDetails_techSpec_section_1').text
-            # itemloader.add_value('title', title)
-            # itemloader.add_value('rating', rating)
-            # itemloader.add_value('price', price)
-            # itemloader.add_value('product_detail', product_detail)
-            # itemloader.add_value('product_specs', product_specs)
-            # itemloader.load_item()
+            driver.get(href)
+            title = driver.find_element_by_id('productTitle').text
+            print(title)
+            rating = driver.find_element_by_id('acrCustomerReviewText').text
+            price = driver.find_element_by_id('priceblock_ourprice').text
+            product_detail = driver.find_element_by_id('feature-bullets').text
+            product_specs = driver.find_element_by_id('productDetails_techSpec_section_1').text
+            itemloader.add_value('title', title)
+            itemloader.add_value('rating', rating)
+            itemloader.add_value('price', price)
+            itemloader.add_value('product_detail', product_detail)
+            itemloader.add_value('product_specs', product_specs)
+            itemloader.load_item()
             driver.close()
             driver.switch_to_window(current_window)
 
