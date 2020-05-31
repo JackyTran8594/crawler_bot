@@ -57,6 +57,7 @@ class SmartSwitchItem(scrapy.Item):
     price = scrapy.Field()
     product_detail = scrapy.Field()
     product_specs = scrapy.Field()
+    product_info = scrapy.Field()
     link = scrapy.Field()
     manufacturer = scrapy.Field()
     features = scrapy.Field()
