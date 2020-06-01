@@ -16,7 +16,6 @@ from scrapy.loader import ItemLoader
 from selenium.common import exceptions
 
 
-
 class AmazonSmartswitchSpider(scrapy.Spider):
     name = 'amazon_smartswitch'
     allowed_domains = ['amazon.com']
@@ -57,42 +56,50 @@ class AmazonSmartswitchSpider(scrapy.Spider):
                 '//a[@class="a-link-normal a-text-normal"]')
             # print(links)
             current_window = driver.current_window_handle
-            urls = [x.get_attribute('href') for x in links] 
+            urls = [x.get_attribute('href') for x in links]
             # print(current_window)
-            for url in urls: 
-                # print(links)
-                # print(len(links))
-                # print('string test')
-                # sleep(3)
-                # wait = WebDriverWait(driver, 5000)
-                # print(href)
-                # sleep(3)
-                # href = link.get_attribute('href')
+            for url in urls:
                 itemloader = ItemLoader(item=SmartSwitchItem(), selector=url)
                 itemloader.add_value('link', url)
                 driver.get(url)
-                title = driver.find_element_by_xpath('//span[@id="productTitle"]').text
-                rating = driver.find_element_by_id('acrCustomerReviewText').text
-                price = driver.find_element_by_id('priceblock_ourprice').text
-                product_info = driver.find_element_by_id('feature-bullets').text
-                # print(title)
-                # print(rating)
-                # print(price)
-                # print(product_info)
-                # print(title)
-                # product_detail = driver.find_element_by_xpath('//div[@id="detail-bullets"]').text
-                # if title is None:
-                #     title = ''
-                # if rating is None:
-                #     rating = ''
-                # if price is None:
+
+                if driver.find_element_by_id(
+                        'priceblock_ourprice').size() != 0:
+                    price = driver.find_element_by_id(
+                        'priceblock_ourprice').text
+                else :
+                    price = ''
+
+                try:
+                    title = driver.find_element_by_xpath(
+                        '//span[@id="productTitle"]').text
+                except exceptions.NoSuchCookieException as e:
+                    title = ''
+                    print(e)
+
+
+                try:
+                   rating = driver.find_element_by_id(
+                        'acrCustomerReviewText').text
+                except exceptions.NoSuchCookieException as e:
+                    rating = ''
+                    print(e)
+
+
+                # try:
+                #     price = driver.find_element_by_id(
+                #         'priceblock_ourprice').text
+                # except exceptions.NoSuchCookieException as e:
                 #     price = ''
-                # if product_info is None:
-                #     product_info = ''
-                # if product_detail is None:
-                #     product_detail = ''
-                # if product_specs is None:
-                #     product_specs = ''
+                #     print(e)
+
+
+                try:
+                   product_info = driver.find_element_by_id(
+                                       'feature-bullets').text
+                except exceptions.NoSuchCookieException as e:
+                    product_info = ''
+                    print(e)
 
                 itemloader.add_value('title', title)
                 itemloader.add_value('rating', rating)
@@ -104,7 +111,7 @@ class AmazonSmartswitchSpider(scrapy.Spider):
                 itemloader.load_item()
                 # driver.close()
                 # driver.switch_to_window(current_window)
-                sleep(5)
+                sleep(2)
 
             next_page_url = driver.find_element_by_xpath('//li[@class="a-last"]/a').get_attribute('href')
             if next_page_url is not None:
@@ -114,5 +121,8 @@ class AmazonSmartswitchSpider(scrapy.Spider):
 
         except  exceptions.StaleElementReferenceException as e:
             print(e)
+
+
+        
 
 
