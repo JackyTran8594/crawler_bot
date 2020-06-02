@@ -66,7 +66,8 @@ DOWNLOADER_MIDDLEWARES = {
     # 'scrapy_selenium.SeleniumMiddleware': 800
 }
 
-
+# don't filter class
+DUPEFILTER_CLASS = 'scrapy.dupefilters.RFPDupeFilter'
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html

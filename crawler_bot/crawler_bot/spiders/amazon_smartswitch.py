@@ -19,23 +19,28 @@ from selenium.common import exceptions
 class AmazonSmartswitchSpider(scrapy.Spider):
     name = 'amazon_smartswitch'
     allowed_domains = ['amazon.com']
-    start_urls = ['http://amazon.com/']
+    start_urls = 'http://amazon.com/'
     # start_urls = ['https://www.amazon.com/s?k=smart+switch+light&ref=nb_sb_noss_2']
 
     def __init__(self):
         self.driver = webdriver.Chrome(
             'C:/ChromeDriverForSelenium/chromedriver')
 
-    # def start_requests(self, response):
-    #     url = start_urls
-    #     self.driver.get(response.url)
-    #     search_textbox = self.driver.find_element_by_id('twotabsearchtextbox')
-    #     search_textbox.send_keys("smart switch light")
-    #     div_search = self.driver.find_element_by_id('nav-search')
-    #     page_search = div_search.find_element_by_class('nav-input').click()
-    #     window_after = self.driver.window_handles[1]
-    #     print(window_after)
-    #     yield scrapy.Request(self.driver.get(window_after), self.parse)
+    def start_requests(self):
+        driver = self.driver
+        url = self.start_urls
+        # print(url)
+        driver.get(url)
+        search_textbox = driver.find_element_by_id('twotabsearchtextbox')
+        search_textbox.send_keys("smart switch light")
+        div_search = driver.find_element_by_id('nav-search')
+        page_search = div_search.find_element_by_class_name(
+            'nav-input').click()
+        window_after = driver.window_handles[0]
+        driver.switch_to_window(window_after)
+        current_url = driver.current_url
+        # print(window_after)
+        yield scrapy.Request(current_url, callback=self.parse)
 
     def parse(self, response):
         try:
@@ -43,15 +48,16 @@ class AmazonSmartswitchSpider(scrapy.Spider):
             # driver.set_page_load_timeout(2)
             # driver.set_script_timeout(2)
             driver.implicitly_wait(3)
-            driver.get(response.url)
-            search_textbox = driver.find_element_by_id('twotabsearchtextbox')
-            search_textbox.send_keys("smart switch light")
-            div_search = driver.find_element_by_id('nav-search')
-            page_search = div_search.find_element_by_class_name(
-                'nav-input').click()
+            driver.set_page_load_timeout(3)
+            # driver.get(response.url)
+            # search_textbox = driver.find_element_by_id('twotabsearchtextbox')
+            # search_textbox.send_keys("smart switch light")
+            # div_search = driver.find_element_by_id('nav-search')
+            # page_search = div_search.find_element_by_class_name(
+            #     'nav-input').click()
             # sleep(2)
-            window_after = driver.window_handles[0]
-            driver.switch_to.window(window_after)
+            # window_after = driver.window_handles[0]
+            # driver.switch_to.window(window_after)
             links = driver.find_elements_by_xpath(
                 '//a[@class="a-link-normal a-text-normal"]')
             # print(links)
@@ -59,115 +65,117 @@ class AmazonSmartswitchSpider(scrapy.Spider):
             urls = [x.get_attribute('href') for x in links]
             # print(current_window)
             for url in urls:
+                # print(url)
                 itemloader = ItemLoader(item=SmartSwitchItem(), selector=url)
                 itemloader.add_value('link', url)
-                # product = itemloader.load_item()
-                # if url is not None:
-                #     yield scrapy.Request(url, callback=self.parse_detail_page, meta = {'product': product} )
-                driver.get(url)
+                product = itemloader.load_item()
+                if url is not None:
+                    driver.get(url)
+                    url_detail_page = driver.current_url
+                    yield scrapy.Request(url_detail_page, callback=self.parse_detail_page, meta={'product': product})
+                # driver.get(url)
 
-                try:
-                    title = driver.find_element_by_xpath(
-                        '//span[@id="productTitle"]').text
-                except exceptions.NoSuchCookieException as e:
-                    title = ''
-                    print(e)
+                # try:
+                #     title = driver.find_element_by_xpath(
+                #         '//span[@id="productTitle"]').text
+                # except exceptions.NoSuchCookieException as e:
+                #     title = ''
+                #     print(e)
 
-                try:
-                    rating = driver.find_element_by_id(
-                        'acrCustomerReviewText').text
-                except exceptions.NoSuchCookieException as e:
-                    rating = ''
-                    print(e)
+                # try:
+                #     rating = driver.find_element_by_id(
+                #         'acrCustomerReviewText').text
+                # except exceptions.NoSuchCookieException as e:
+                #     rating = ''
+                #     print(e)
 
-                if len(driver.find_elements(By.ID, 'priceblock_ourprice')) > 0:
-                    price = driver.find_elements(By.ID, 'priceblock_ourprice')[0].text
-                else:
-                    price = ''
+                # if len(driver.find_elements(By.ID, 'priceblock_ourprice')) > 0:
+                #     price = driver.find_elements(By.ID, 'priceblock_ourprice')[0].text
+                # else:
+                #     price = ''
 
-                if len(driver.find_elements(By.ID, 'feature-bullets')) > 0:
-                    product_detail = driver.find_elements(By.ID, 'feature-bullets')[0].text
-                else:
-                    product_detail = ''
+                # if len(driver.find_elements(By.ID, 'feature-bullets')) > 0:
+                #     product_detail = driver.find_elements(By.ID, 'feature-bullets')[0].text
+                # else:
+                #     product_detail = ''
 
-                if len(driver.find_elements(By.ID, 'productDetails_techSpec_section_1')) > 0:
-                    product_specs = driver.find_elements(
-                        By.ID, 'productDetails_techSpec_section_1')[0].text
-                else:
-                    product_specs = ''
+                # if len(driver.find_elements(By.ID, 'productDetails_techSpec_section_1')) > 0:
+                #     product_specs = driver.find_elements(
+                #         By.ID, 'productDetails_techSpec_section_1')[0].text
+                # else:
+                #     product_specs = ''
 
-                try:
-                    product_info = driver.find_element_by_id(
-                        'feature-bullets').text
-                except exceptions.NoSuchCookieException as e:
-                    product_info = ''
-                    print(e)
+                # try:
+                #     product_info = driver.find_element_by_id(
+                #         'feature-bullets').text
+                # except exceptions.NoSuchCookieException as e:
+                #     product_info = ''
+                #     print(e)
 
                 # product_detail = driver.find_element_by_id('feature-bullets').text
                 # product_specs = driver.find_element_by_id('productDetails_techSpec_section_1').text
 
                 # detail_loader = ItemLoader(item=product, response=response)
 
-                itemloader.add_value('title', title)
-                itemloader.add_value('rating', rating)
-                itemloader.add_value('price', price)
-                itemloader.add_value('product_detail', product_detail)
-                itemloader.add_value('product_specs', product_specs)
-                itemloader.add_value('product_info', product_info)
-                yield itemloader.load_item()
+                # itemloader.add_value('title', title)
+                # itemloader.add_value('rating', rating)
+                # itemloader.add_value('price', price)
+                # itemloader.add_value('product_detail', product_detail)
+                # itemloader.add_value('product_specs', product_specs)
+                # itemloader.add_value('product_info', product_info)
+                # yield itemloader.load_item()
 
             driver.switch_to_window(current_window)
             sleep(3)
                 # driver.close()
-                
-            next_page_url = driver.find_element_by_xpath(
-                '//li[@class="a-last"]/a').get_attribute('href')
+
+            next_page_url = driver.find_elements_by_xpath(
+                '//li[@class="a-last"]/a')[0].get_attribute('href')
             if next_page_url is not None:
                 # print(next_page_url)
-                next_page = response.urljoin(next_page_url)
-                yield scrapy.Request(next_page, callback=self.parse)
+                # next_page = response.urljoin(next_page_url)
+                driver.get(next_page_url)
+                url_by_page = driver.current_url
+                yield scrapy.Request(url_by_page, callback=self.parse)
 
         except exceptions.StaleElementReferenceException as e:
             print(e)
 
-
     def parse_detail_page(self, response):
+        driver = self.driver
+        driver.implicitly_wait(3)
+        driver.set_page_load_timeout(3)
         product = response.meta['product']
-        try:
-            title = driver.find_element_by_xpath(
-                '//span[@id="productTitle"]').text
-        except exceptions.NoSuchCookieException as e:
+        if len(driver.find_elements(By.ID, '//span[@id="productTitle"]')) > 0:
+            title = driver.find_elements(
+                By.XPATH, '//span[@id="productTitle"]')[0].text
+        else:
             title = ''
-            print(e)
 
-        try:
-            rating = driver.find_element_by_id(
-                'acrCustomerReviewText').text
-        except exceptions.NoSuchCookieException as e:
+        if len(driver.find_elements(By.ID, 'acrCustomerReviewText')) > 0:
+            rating = driver.find_elements(By.ID, 'acrCustomerReviewText')[0].text
+        else:
             rating = ''
-            print(e)
 
         if len(driver.find_elements(By.ID, 'priceblock_ourprice')) > 0:
-            price = driver.find_element(By.ID, 'priceblock_ourprice')
+            price = driver.find_elements(By.ID, 'priceblock_ourprice')[0].text
         else:
             price = ''
 
         if len(driver.find_elements(By.ID, 'feature-bullets')) > 0:
-            product_detail = driver.find_elements(By.ID, 'feature-bullets')[0]
+            product_detail = driver.find_elements(By.ID, 'feature-bullets')[0].text
         else:
             product_detail = ''
 
         if len(driver.find_elements(By.ID, 'productDetails_techSpec_section_1')) > 0:
-            product_specs = driver.find_elements(By.ID, 'productDetails_techSpec_section_1')[0]
+            product_specs = driver.find_elements(By.ID, 'productDetails_techSpec_section_1')[0].text
         else:
             product_specs = ''
 
-        try:
-            product_info = driver.find_element_by_id(
-                'feature-bullets').text
-        except exceptions.NoSuchCookieException as e:
+        if len(driver.find_elements(By.ID, 'feature-bullets')) > 0:
+            product_info = driver.find_elements(By.ID, 'feature-bullets')[0].text
+        else:
             product_info = ''
-            print(e)
 
         # product_detail = driver.find_element_by_id('feature-bullets').text
         # product_specs = driver.find_element_by_id('productDetails_techSpec_section_1').text
