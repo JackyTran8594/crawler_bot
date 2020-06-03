@@ -29,6 +29,7 @@ class AmazonSmartswitchSpider(scrapy.Spider):
     def start_requests(self):
         driver = self.driver
         url = self.start_urls
+        driver.implicitly_wait(7)
         # print(url)
         driver.get(url)
         search_textbox = driver.find_element_by_id('twotabsearchtextbox')
@@ -47,8 +48,8 @@ class AmazonSmartswitchSpider(scrapy.Spider):
             driver = self.driver
             # driver.set_page_load_timeout(2)
             # driver.set_script_timeout(2)
-            driver.implicitly_wait(3)
-            driver.set_page_load_timeout(3)
+            driver.implicitly_wait(7)
+            # driver.set_page_load_timeout(3)
             # driver.get(response.url)
             # search_textbox = driver.find_element_by_id('twotabsearchtextbox')
             # search_textbox.send_keys("smart switch light")
@@ -71,6 +72,7 @@ class AmazonSmartswitchSpider(scrapy.Spider):
                 product = itemloader.load_item()
                 if url is not None:
                     driver.get(url)
+                    sleep(2)
                     url_detail_page = driver.current_url
                     yield scrapy.Request(url_detail_page, callback=self.parse_detail_page, meta={'product': product})
                 # driver.get(url)
@@ -132,10 +134,11 @@ class AmazonSmartswitchSpider(scrapy.Spider):
             next_page_url = driver.find_elements_by_xpath(
                 '//li[@class="a-last"]/a')[0].get_attribute('href')
             if next_page_url is not None:
-                # print(next_page_url)
+                print(next_page_url)
                 # next_page = response.urljoin(next_page_url)
                 driver.get(next_page_url)
                 url_by_page = driver.current_url
+                print(url_by_page)
                 yield scrapy.Request(url_by_page, callback=self.parse)
 
         except exceptions.StaleElementReferenceException as e:
@@ -143,14 +146,21 @@ class AmazonSmartswitchSpider(scrapy.Spider):
 
     def parse_detail_page(self, response):
         driver = self.driver
-        driver.implicitly_wait(3)
-        driver.set_page_load_timeout(3)
+        driver.implicitly_wait(10)
+        driver.set_page_load_timeout(10)
+        # driver.
         product = response.meta['product']
-        if len(driver.find_elements(By.ID, '//span[@id="productTitle"]')) > 0:
-            title = driver.find_elements(
-                By.XPATH, '//span[@id="productTitle"]')[0].text
-        else:
+        # if len(driver.find_elements(By.ID, '//span[@id="productTitle"]')) > 0:
+        #     title = driver.find_elements(
+        #         By.XPATH, '//span[@id="productTitle"]')[0].text
+        # else:
+        #     title = ''
+
+        try:
+            title = driver.find_element_by_xpath('//span[@id="productTitle"]').text
+        except exceptions.NoSuchCookieException as e:
             title = ''
+            print(e)
 
         if len(driver.find_elements(By.ID, 'acrCustomerReviewText')) > 0:
             rating = driver.find_elements(By.ID, 'acrCustomerReviewText')[0].text

@@ -62,7 +62,7 @@ ROBOTSTXT_OBEY = False
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     'crawler_bot.middlewares.CrawlerBotDownloaderMiddleware': 543,
-    'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware': 350,
+    'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware': 400,
     # 'scrapy_selenium.SeleniumMiddleware': 800
 }
 
