@@ -49,8 +49,8 @@ class AmazonSmartswitchSpider(scrapy.Spider):
             driver = self.driver
             # driver.set_page_load_timeout(2)
             # driver.set_script_timeout(2)
-            driver.implicitly_wait(10)
-            driver.set_page_load_timeout(10)
+            driver.implicitly_wait(20)
+            driver.set_page_load_timeout(20)
             # driver.get(response.url)
             # search_textbox = driver.find_element_by_id('twotabsearchtextbox')
             # search_textbox.send_keys("smart switch light")
@@ -70,7 +70,7 @@ class AmazonSmartswitchSpider(scrapy.Spider):
                 # print(url)
                 itemloader = ItemLoader(item=SmartSwitchItem(), selector=url)
                 itemloader.add_value('link', url)
-                product = itemloader.load_item()
+                # product = itemloader.load_item()
                 driver.get(url)
                 sleep(2)
                 # if url is not None:
@@ -78,36 +78,36 @@ class AmazonSmartswitchSpider(scrapy.Spider):
                 #     sleep(2)
                 #     url_detail_page = driver.current_url
                 #     yield scrapy.Request(url_detail_page, callback=self.parse_detail_page, meta={'product': product})
-
-
                 try:
-                    title = driver.find_element_by_xpath('//span[@id="productTitle"]').text[0]
-                except exceptions.NoSuchCookieException as e:
+                    if len(driver.find_elements(By.XPATH, '//span[@id="productTitle"]')) > 0:
+                       title = str(driver.find_element_by_xpath('//span[@id="productTitle"]').text)
+                except exceptions.NoSuchElementException as e:
                     title = ''
-                    print(e)
+                    # print(e)
+                    pass
 
                 if len(driver.find_elements(By.ID, 'acrCustomerReviewText')) > 0:
-                    rating = driver.find_elements(By.ID, 'acrCustomerReviewText')[0].text[0]
+                    rating = str(driver.find_elements(By.ID, 'acrCustomerReviewText')[0].text)
                 else:
                     rating = ''
 
                 if len(driver.find_elements(By.ID, 'priceblock_ourprice')) > 0:
-                    price = driver.find_elements(By.ID, 'priceblock_ourprice')[0].text[0]
+                    price = str(driver.find_elements(By.ID, 'priceblock_ourprice')[0].text)
                 else:
                     price = ''
 
                 if len(driver.find_elements(By.ID, 'feature-bullets')) > 0:
-                    product_detail = driver.find_elements(By.ID, 'feature-bullets')[0].text[0]
+                    product_detail = str(driver.find_elements(By.ID, 'feature-bullets')[0].text)
                 else:
                     product_detail = ''
 
                 if len(driver.find_elements(By.ID, 'productDetails_techSpec_section_1')) > 0:
-                    product_specs = driver.find_elements(By.ID, 'productDetails_techSpec_section_1')[0].text[0]
+                    product_specs = str(driver.find_elements(By.ID, 'productDetails_techSpec_section_1')[0].text)
                 else:
                     product_specs = ''
 
                 if len(driver.find_elements(By.ID, 'feature-bullets')) > 0:
-                    product_info = driver.find_elements(By.ID, 'feature-bullets')[0].text[0]
+                    product_info = str(driver.find_elements(By.ID, 'feature-bullets')[0].text)
                 else:
                     product_info = ''
 
