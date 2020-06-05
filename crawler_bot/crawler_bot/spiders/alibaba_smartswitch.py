@@ -21,21 +21,24 @@ class AlibabaSmartswitchSpider(scrapy.Spider):
 
     def __init__(self):
         options = webdriver.ChromeOptions()
-        options.add_argument('disable-popup-blocking')
+        options.add_argument('--disable-popup-blocking')
         self.driver = webdriver.Chrome(
             executable_path='C:/ChromeDriverForSelenium/chromedriver', chrome_options=options)
-    
 
     def start_requests(self):
         driver = self.driver
         url_main_page = self.start_urls
-        driver.implicitly_wait(10)
+        driver.implicitly_wait(20)
+        driver.set_page_load_timeout(20)
         driver.get(url_main_page)
         search_textbox = driver.find_element_by_xpath(
-            '//div[@id="sticky-searchbar"]//input[@class="ui-searchbar-keyword"]')
+            '//div[@class="J-sc-hd-searchbar ui-searchbar ui2-searchbar ui-searchbar-size-middle ui-searchbar-primary ui-searchbar-mod-type ui-searchbar-img-search"]//div[@class="ui-searchbar-main"]//input[@class="ui-searchbar-keyword"]')
+        print(search_textbox)
         search_textbox.send_keys("smart switch light")
         submit_search = driver.find_element_by_xpath(
-            '//div[@class="J-sc-hd-searchbar ui-searchbar ui2-searchbar ui-searchbar-size-middle ui-searchbar-primary ui-searchbar-mod-type ui-searchbar-img-search"]//input[@class="ui-searchbar-submit"]').click()
+            '//div[@class="J-sc-hd-searchbar ui-searchbar ui2-searchbar ui-searchbar-size-middle ui-searchbar-primary ui-searchbar-mod-type ui-searchbar-img-search"]//input[@class="ui-searchbar-submit"]'
+            ).click()
+        print(submit_search)
         window_after = driver.window_handles[0]
         driver.switch_to_window(window_after)
         self.current_url = driver.current_url
@@ -48,6 +51,7 @@ class AlibabaSmartswitchSpider(scrapy.Spider):
             driver.set_page_load_timeout(20)
             links = driver.find_elements_by_xpath(
                 '//div[(@class="list-no-v1-offer-outter J-offer-wrapper increase-pd")]//a[@class ="organic-gallery-title"]')
+            print(links)
             urls = [x.get_attribute('href') for x in links]
             for url in urls:
                 print(url)
@@ -92,7 +96,8 @@ class AlibabaSmartswitchSpider(scrapy.Spider):
             driver.get(self.current_url)
             sleep(3)
 
-            driver.find_element_by_xpath('//a[@class="seb-pagination__pages-link pages-next"]').click()
+            driver.find_element_by_xpath(
+                '//a[@class="seb-pagination__pages-link pages-next"]').click()
             window_after = driver.window_handles[0]
             driver.switch_to_window(window_after)
             next_page_url = driver.current_url
