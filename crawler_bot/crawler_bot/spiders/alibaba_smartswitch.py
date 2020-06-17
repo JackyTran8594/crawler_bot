@@ -28,16 +28,21 @@ class AlibabaSmartswitchSpider(scrapy.Spider):
     def start_requests(self):
         driver = self.driver
         url_main_page = self.start_urls
-        driver.implicitly_wait(20)
-        driver.set_page_load_timeout(20)
+        driver.implicitly_wait(30)
+        driver.set_page_load_timeout(30)
         driver.get(url_main_page)
         search_textbox = driver.find_element_by_xpath(
             '//div[@class="J-sc-hd-searchbar ui-searchbar ui2-searchbar ui-searchbar-size-middle ui-searchbar-primary ui-searchbar-mod-type ui-searchbar-img-search"]//div[@class="ui-searchbar-main"]//input[@class="ui-searchbar-keyword"]')
         print(search_textbox)
         search_textbox.send_keys("smart switch light")
-        submit_search = driver.find_element_by_xpath(
-            '//div[@class="J-sc-hd-searchbar ui-searchbar ui2-searchbar ui-searchbar-size-middle ui-searchbar-primary ui-searchbar-mod-type ui-searchbar-img-search"]//input[@class="ui-searchbar-submit"]'
-            ).click()
+        sleep(5)
+        # submit_search = driver.find_element_by_xpath(
+        #     '//div[@class="J-sc-hd-searchbar ui-searchbar ui2-searchbar ui-searchbar-size-middle ui-searchbar-primary ui-searchbar-mod-type ui-searchbar-img-search"]//input[@class="ui-searchbar-submit"]'
+        #     )
+        submit_search = driver.find_elements_by_css_selector('[value="Search"]')
+        print(submit_search)
+        submit_search[0].click()
+        # submit_search[0].click()
         print(submit_search)
         window_after = driver.window_handles[0]
         driver.switch_to_window(window_after)
