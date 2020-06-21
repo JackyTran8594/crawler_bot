@@ -61,4 +61,10 @@ class SmartSwitchItem(scrapy.Item):
     link = scrapy.Field()
     manufacturer = scrapy.Field()
     features = scrapy.Field()
+    min_order = scrapy.Field()
+    medium_order = scrapy.Field()
+    large_order = scrapy.Field()
+    min_order_price = scrapy.Field()
+    medium_order_price = scrapy.Field()
+    large_order_price = scrapy.Field()
     pass
