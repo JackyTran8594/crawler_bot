@@ -6,7 +6,8 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 import scrapy
-
+from scrapy_djangoitem import DjangoItem
+from crawler_app.myapp.models import Product
 
 class SurveillanceItem(scrapy.Item):
     # define the fields for your item here like:
@@ -68,3 +69,7 @@ class SmartSwitchItem(scrapy.Item):
     medium_order_price = scrapy.Field()
     large_order_price = scrapy.Field()
     pass
+
+
+class Product(DjangoItem):
+    django_model = Product

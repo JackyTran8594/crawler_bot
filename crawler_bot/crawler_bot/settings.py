@@ -10,10 +10,23 @@ from shutil import which
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+
 BOT_NAME = 'crawler_bot'
 
 SPIDER_MODULES = ['crawler_bot.spiders']
 NEWSPIDER_MODULE = 'crawler_bot.spiders'
+
+# DJANGO INTEGRATION
+
+sys.path.append(os.path.dirname(os.path.abspath('.')))
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'crawler_app.settings'
+
+import django
+django.setup()
+
+# DJANGO INTEGRATION
+
 
 #Configuration selenium
 # SELENIUM_DRIVER_NAME = 'chromedriver'
