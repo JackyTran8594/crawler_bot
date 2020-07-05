@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from shutil import which
+import os
+import sys
 
 # Scrapy settings for crawler_bot project
 #
@@ -19,13 +21,13 @@ NEWSPIDER_MODULE = 'crawler_bot.spiders'
 # DJANGO INTEGRATION
 
 sys.path.append(os.path.dirname(os.path.abspath('.')))
-
-os.environ['DJANGO_SETTINGS_MODULE'] = 'crawler_app.settings'
+# do not forget the change crawler_app part based on your project name
+os.environ['DJANGO_SETTINGS_MODULE'] = 'crawler_app.crawler_app.settings'
 
 import django
 django.setup()
 
-# DJANGO INTEGRATION
+# END DJANGO INTEGRATION
 
 
 #Configuration selenium

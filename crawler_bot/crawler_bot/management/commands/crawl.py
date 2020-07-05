@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from crawler_bot.spiders import alibaba_smartswitch, amazon_smartswitch, surveillance_video, tiki_product
+from crawler_bot.crawler_bot.items import alibaba_smartswitch, amazon_smartswitch, surveillance_video, tiki_product
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 
