@@ -27,6 +27,9 @@ class Product(models.Model):
     average_rating = models.FloatField()
     name_of_rank = models.TextField()
 
+    def __str__(self):
+        return self.product_id
+
 
 class Category(models.Model):
     category_id = models.CharField(max_length=255)
@@ -39,6 +42,9 @@ class Category(models.Model):
     note = models.TextField()
     ecommercial_name = models.TextField()
 
+    def __str__(self):
+        return self.category_id
+
 
 class Provider(models.Model):
     provider_id = models.CharField(max_length=255)
@@ -49,3 +55,6 @@ class Provider(models.Model):
     data_save = models.DateTimeField()
     data_update = models.DateTimeField()
     note = models.TextField()
+
+    def __str__(self):
+        return self.provider_id
